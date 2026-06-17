@@ -34,7 +34,7 @@ export default function AgeModeSelector() {
                 animate={{ y: [0, -6, 0] }}
                 transition={{ duration: 3, repeat: Infinity }}
               >
-                <img src="/zanzibar.Camp_logo.png" alt="Zanzibar.Camp" className="h-16 w-auto object-contain" />
+                <img src="/zanzibar.Camp_logo-Photoroom.png" alt="Zanzibar.Camp" className="h-16 w-auto object-contain" />
               </motion.div>
               <h2 className="text-2xl md:text-4xl font-bold mb-2">Welcome to Zanzibar.Center</h2>
               <p className="text-text-secondary">Choose how you play — games for kids, React for web builders</p>

@@ -4,7 +4,7 @@ import { useUIStore, useGameStore } from '../store/gameStore'
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
 
-const LOGO_SRC = '/zanzibar.Camp_logo.png'
+const LOGO_SRC = '/zanzibar.Camp_logo-Photoroom.png'
 
 const NAV_ITEMS = [
   { to: '/camp', label: 'Camp', icon: '🏕️' },

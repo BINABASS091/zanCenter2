@@ -1,9 +1,21 @@
+const EVENT_END_DATE = new Date('2026-06-30T23:59:59Z')
+
+function computeEndsIn() {
+  const now = new Date()
+  const diffMs = EVENT_END_DATE - now
+  if (diffMs <= 0) return 'event ended'
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  if (days === 0) return 'today'
+  if (days === 1) return '1 day'
+  return `${days} days`
+}
+
 export const SEASONAL_EVENT = {
   id: 'spring-festival-2026',
   title: 'Spring Island Festival',
   subtitle: 'Limited-time rewards, exclusive badges & bonus XP!',
   emoji: '🌸',
-  endsIn: '12 days',
+  endsIn: computeEndsIn(),
   bonusXP: 2,
   theme: 'from-tropical-green/30 to-island-blue/20',
 }
