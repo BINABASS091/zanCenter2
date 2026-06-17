@@ -1,8 +1,10 @@
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useState } from 'react'
 import TopNavigation from '../components/TopNavigation'
 import AchievementCard from '../components/AchievementCard'
-import { Download, Share2, Code as Code2, ExternalLink } from 'lucide-react'
+import { Download, Share2, Code as Code2, ExternalLink, X, CircleCheck as CheckCircle } from 'lucide-react'
 import { useGameStore } from '../store/gameStore'
+import { useUIStore } from '../store/gameStore'
 import { getCourseProgress } from '../data/reactCourse'
 
 const PORTFOLIO_PROJECTS = [
@@ -44,9 +46,70 @@ const PORTFOLIO_PROJECTS = [
   },
 ]
 
+function ProjectPreviewModal({ project, onClose }) {
+  return (
+    <AnimatePresence>
+      {project && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ocean-deep/80 backdrop-blur-md"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ scale: 0.9, y: 20, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.9, y: 20, opacity: 0 }}
+            className="w-full max-w-2xl glass-effect rounded-3xl overflow-hidden border border-island-blue/20 shadow-premium"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">{project.thumbnail}</span>
+                <div>
+                  <h3 className="font-bold text-xl">{project.name}</h3>
+                  <p className="text-sm text-text-secondary">{project.description}</p>
+                </div>
+              </div>
+              <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-xl transition-all">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-8">
+              <div className="aspect-video rounded-2xl bg-gradient-to-br from-ocean-surface to-ocean-deep border border-white/10 flex flex-col items-center justify-center mb-6">
+                <motion.span
+                  className="text-7xl mb-4"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 2.5, repeat: Infinity }}
+                >
+                  {project.thumbnail}
+                </motion.span>
+                <p className="text-lg font-bold">{project.name}</p>
+                <p className="text-sm text-text-secondary mt-1">{project.description}</p>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-6">
+                {project.tech.map((t) => (
+                  <span key={t} className="text-xs px-3 py-1 rounded-full bg-island-blue/20 text-island-blue font-semibold">{t}</span>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 text-tropical-green text-sm font-semibold">
+                <CheckCircle size={16} />
+                <span>Project {project.status === 'published' ? 'published' : 'ready to publish'}</span>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
 export default function PortfolioPage() {
   const { totalAchievements, unlockedAchievements, reactCourseProgress, userName } = useGameStore()
+  const { addNotification } = useUIStore()
   const course = getCourseProgress(reactCourseProgress)
+  const [previewProject, setPreviewProject] = useState(null)
 
   const projects = PORTFOLIO_PROJECTS.map((p) => {
     const unlocked = p.requiresLessons.every((id) => reactCourseProgress[id]?.completed)
@@ -62,24 +125,49 @@ export default function PortfolioPage() {
   }))
 
   const exportPortfolio = () => {
+    const unlockedProjectNames = projects.filter((p) => p.unlocked).map((p) => p.name)
+    const unlockedAchievementNames = achievementsList.filter((a) => a.unlocked).map((a) => a.title)
     const lines = [
-      `${userName}'s Zanzibar.Center Portfolio`,
-      `React Course: ${course.percent}% complete`,
+      `=== ${userName}'s Zanzibar.Center Portfolio ===`,
+      `Generated: ${new Date().toLocaleDateString()}`,
+      '',
+      `React Course Progress: ${course.percent}% complete (${course.completed}/${course.total} lessons)`,
       '',
       'Projects:',
-      ...projects.map((p) => `- ${p.name} (${p.status})`),
+      ...projects.map((p) => `  [${p.unlocked ? '✓' : ' '}] ${p.name} — ${p.status}`),
+      '',
+      'Achievements Unlocked:',
+      ...unlockedAchievementNames.map((t) => `  ★ ${t}`),
+      '',
+      `Portfolio URL: zanzibar.center/portfolio/${userName.toLowerCase().replace(/\s+/g, '-')}`,
     ]
     const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = 'zanzibar-center-portfolio.txt'
+    link.download = `${userName.replace(/\s+/g, '-')}-zanzibar-portfolio.txt`
     link.click()
     URL.revokeObjectURL(url)
+    addNotification({ type: 'success', title: 'Portfolio exported!', message: 'Your portfolio summary has been downloaded.' })
+  }
+
+  const sharePortfolio = async () => {
+    const shareText = `🌴 Check out ${userName}'s Zanzibar.Center Portfolio!\nReact Course: ${course.percent}% complete · ${projects.filter((p) => p.unlocked).length} projects published\nzanzibar.center`
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `${userName}'s Portfolio`, text: shareText, url: 'https://zanzibar.center' })
+      } catch {
+        // User cancelled share
+      }
+    } else if (navigator.clipboard) {
+      await navigator.clipboard.writeText(shareText)
+      addNotification({ type: 'success', title: 'Link copied!', message: 'Portfolio share text copied to clipboard.' })
+    }
   }
 
   return (
     <div className="min-h-screen bg-gradient-ocean text-white">
+      <ProjectPreviewModal project={previewProject} onClose={() => setPreviewProject(null)} />
       <TopNavigation />
       <main className="max-w-6xl mx-auto px-4 md:px-8 py-8 md:py-12">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
@@ -125,7 +213,10 @@ export default function PortfolioPage() {
                 </div>
               </div>
               {project.unlocked && (
-                <button className="mt-4 w-full premium-button-secondary text-sm flex items-center justify-center gap-2">
+                <button
+                  onClick={() => setPreviewProject(project)}
+                  className="mt-4 w-full premium-button-secondary text-sm flex items-center justify-center gap-2 hover:border-island-blue/40 transition-all"
+                >
                   <ExternalLink size={14} /> Preview Project
                 </button>
               )}
@@ -137,7 +228,7 @@ export default function PortfolioPage() {
           <button onClick={exportPortfolio} className="premium-button-secondary flex items-center gap-2 px-5 py-3">
             <Download size={16} /> Export
           </button>
-          <button className="premium-button-primary flex items-center gap-2 px-5 py-3">
+          <button onClick={sharePortfolio} className="premium-button-primary flex items-center gap-2 px-5 py-3">
             <Share2 size={16} /> Share Portfolio
           </button>
         </div>

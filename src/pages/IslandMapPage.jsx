@@ -1,12 +1,14 @@
 import { motion } from 'framer-motion'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import TopNavigation from '../components/TopNavigation'
 import BuildingCard from '../components/BuildingCard'
 import { useGameStore } from '../store/gameStore'
-import { RotateCcw, Grid3x3 } from 'lucide-react'
+import { Grid3x3 } from 'lucide-react'
 import IslandMap from '../components/IslandMap'
 import { useUIStore } from '../store/gameStore'
 import { buildingCatalog } from '../data/sampleData'
+
+const MAX_ISLAND_CAPACITY = 24
 
 export default function IslandMapPage() {
   const {
@@ -18,8 +20,6 @@ export default function IslandMapPage() {
     upgradeBuilding,
     completedMissions,
     unlockedAchievements,
-    resetGame,
-    addGold,
   } = useGameStore()
   const { addNotification } = useUIStore()
   const [selectedBuilding, setSelectedBuilding] = useState(null)
@@ -107,8 +107,8 @@ export default function IslandMapPage() {
           {[
             { label: 'Gold', value: gold, emoji: '💰' },
             { label: 'Buildings', value: placedBuildings.length, emoji: '🏗️' },
-            { label: 'Area Used', value: `${Math.floor((placedBuildings.length / 24) * 100)}%`, emoji: '📍' },
-            { label: 'Capacity', value: '24', emoji: '🏝️' },
+            { label: 'Area Used', value: `${Math.floor((placedBuildings.length / MAX_ISLAND_CAPACITY) * 100)}%`, emoji: '📍' },
+            { label: 'Capacity', value: MAX_ISLAND_CAPACITY, emoji: '🏝️' },
           ].map((item) => (
             <div key={item.label} className="premium-card rounded-lg p-4">
               <p className="text-2xl mb-2">{item.emoji}</p>
@@ -130,26 +130,17 @@ export default function IslandMapPage() {
                 <Grid3x3 size={24} />
                 Island Canvas
               </h2>
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => {
-                    addGold(1000)
-                    addNotification({ type: 'success', title: 'Treasure claimed!', message: '+1,000 Gold coins added!' })
-                  }}
-                  className="premium-button-primary text-sm flex items-center gap-2 bg-gradient-to-r from-golden-sun to-coral-alert px-4 py-2 hover:shadow-premium"
-                >
-                  🪙 Claim +1000 Gold
-                </button>
-                <button 
-                  onClick={() => {
-                    resetGame()
-                    addNotification({ type: 'info', title: 'Island reset', message: 'All buildings cleared and gold reset.' })
-                  }}
-                  className="premium-button-secondary text-sm flex items-center gap-2"
-                >
-                  <RotateCcw size={16} />
-                  Reset
-                </button>
+              <div className="flex items-center gap-2 text-xs text-text-secondary">
+                <span className="glass-effect rounded-lg px-3 py-1.5">
+                  {placedBuildings.length}/{MAX_ISLAND_CAPACITY} buildings
+                </span>
+                <span className={`rounded-lg px-3 py-1.5 font-semibold ${
+                  gold >= 500 ? 'bg-tropical-green/20 text-tropical-green' :
+                  gold >= 200 ? 'bg-golden-sun/20 text-golden-sun' :
+                  'bg-coral-alert/20 text-coral-alert'
+                }`}>
+                  💰 {gold} gold
+                </span>
               </div>
             </div>
 

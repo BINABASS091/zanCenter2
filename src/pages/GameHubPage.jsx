@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import TopNavigation from '../components/TopNavigation'
 import QuizArena from '../components/miniGames/QuizArena'
 import TapQuest from '../components/miniGames/TapQuest'
+import InteractiveLesson from '../components/InteractiveLesson'
 import { MINI_GAMES, SEASONAL_EVENT, filterGamesByAge } from '../data/gameHub'
 import { useGameStore, useUIStore } from '../store/gameStore'
 import { useAgeMode } from '../hooks/useAgeMode'
@@ -15,10 +16,15 @@ export default function GameHubPage() {
   const { completedMiniGames, completeMiniGame, learningStreak } = useGameStore()
   const { addNotification } = useUIStore()
   const [activeGame, setActiveGame] = useState(null)
+  const [jsPlaygroundOpen, setJsPlaygroundOpen] = useState(false)
 
   const games = filterGamesByAge(MINI_GAMES, ageMode)
 
   const handleGame = (game) => {
+    if (game.id === 'js-playground') {
+      setJsPlaygroundOpen(true)
+      return
+    }
     if (game.type === 'inline') {
       setActiveGame(game.id)
       return
@@ -50,6 +56,10 @@ export default function GameHubPage() {
           onComplete={() => onGameComplete('tap-quest', 80)}
         />
       )}
+      <InteractiveLesson
+        isOpen={jsPlaygroundOpen}
+        onClose={() => setJsPlaygroundOpen(false)}
+      />
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import TopNavigation from '../components/TopNavigation'
-import { Users, ChartBar as BarChart3, BookCheck, FileText, TrendingUp, Award, Download } from 'lucide-react'
+import { Users, ChartBar as BarChart3, BookCheck, FileText, TrendingUp, Award, Download, CircleCheck as CheckCircle } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts'
 
 const classData = [
@@ -16,12 +17,101 @@ const progressData = [
   { name: 'Class D', progress: 65 },
 ]
 
+const REPORTS = [
+  {
+    id: 'weekly',
+    label: 'Weekly class summary',
+    description: 'Overview of class activities, completion rates, and top performers for the week.',
+    filename: 'weekly-class-summary.txt',
+    content: () => [
+      '=== Weekly Class Summary — Zanzibar.Center ===',
+      `Generated: ${new Date().toLocaleDateString()}`,
+      '',
+      'Class Progress Overview:',
+      ...progressData.map((c) => `  ${c.name}: ${c.progress}%`),
+      '',
+      'Status Distribution:',
+      ...classData.map((s) => `  ${s.name}: ${s.value}%`),
+    ].join('\n'),
+  },
+  {
+    id: 'atrisk',
+    label: 'At-risk learner report',
+    description: 'Students below the 65% progress threshold who may need additional support.',
+    filename: 'at-risk-learners.txt',
+    content: () => [
+      '=== At-Risk Learner Report — Zanzibar.Center ===',
+      `Generated: ${new Date().toLocaleDateString()}`,
+      '',
+      'Students Needing Support:',
+      '  Class D — 65% (below threshold)',
+      '',
+      'Recommended Actions:',
+      '  - Schedule 1:1 check-in sessions',
+      '  - Assign targeted mini-game challenges',
+      '  - Notify parents via Parent Dashboard',
+    ].join('\n'),
+  },
+  {
+    id: 'milestone',
+    label: 'Achievement milestone report',
+    description: 'Summary of achievement badges and milestones reached across all classes.',
+    filename: 'achievement-milestones.txt',
+    content: () => [
+      '=== Achievement Milestone Report — Zanzibar.Center ===',
+      `Generated: ${new Date().toLocaleDateString()}`,
+      '',
+      'Total Certificates Issued: 24',
+      'Projects Reviewed: 48',
+      '',
+      'Top Achievements This Week:',
+      '  ★ Maya — Solar Island Grid — A+',
+      '  ★ Liam — Water Cycle Explorer — A',
+      '  ★ Noah — Code Challenge 3 — B+',
+    ].join('\n'),
+  },
+  {
+    id: 'parent',
+    label: 'Parent progress export',
+    description: 'Ready-to-share PDF-style summary for parent-teacher meetings.',
+    filename: 'parent-progress-export.txt',
+    content: () => [
+      '=== Parent Progress Export — Zanzibar.Center ===',
+      `Generated: ${new Date().toLocaleDateString()}`,
+      '',
+      'Class Average Progress: 78%',
+      'Students on Track: 68%',
+      'Students In Progress: 22%',
+      'Students Needing Help: 10%',
+      '',
+      'This report is suitable for sharing with parents at scheduled review meetings.',
+    ].join('\n'),
+  },
+]
+
+function downloadTextFile(filename, content) {
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function TeacherDashboardPage() {
+  const [downloadedReports, setDownloadedReports] = useState([])
+
   const iconColors = {
     'island-blue': '#00D4FF',
     'tropical-green': '#2EE59D',
     'golden-sun': '#FFCC00',
     'coral-alert': '#FF5C5C',
+  }
+
+  const handleDownloadReport = (report) => {
+    downloadTextFile(report.filename, report.content())
+    setDownloadedReports((prev) => [...new Set([...prev, report.id])])
   }
 
   const exportCsv = () => {
@@ -136,17 +226,29 @@ export default function TeacherDashboardPage() {
 
           <div className="premium-card rounded-2xl p-8">
             <h2 className="text-2xl font-bold mb-6">Reports</h2>
-            <div className="space-y-4">
-              {[
-                'Weekly class summary',
-                'At-risk learner report',
-                'Achievement milestone report',
-                'Parent progress export',
-              ].map((report) => (
-                <button key={report} className="w-full glass-effect rounded-xl p-4 text-left hover:shadow-premium transition-all">
-                  {report}
-                </button>
-              ))}
+            <div className="space-y-3">
+              {REPORTS.map((report) => {
+                const downloaded = downloadedReports.includes(report.id)
+                return (
+                  <button
+                    key={report.id}
+                    onClick={() => handleDownloadReport(report)}
+                    className="w-full glass-effect rounded-xl p-4 text-left hover:shadow-premium hover:border-island-blue/30 transition-all group"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm group-hover:text-island-blue transition-colors">{report.label}</p>
+                        <p className="text-xs text-text-secondary mt-0.5 line-clamp-1">{report.description}</p>
+                      </div>
+                      {downloaded ? (
+                        <CheckCircle size={16} className="text-tropical-green shrink-0 mt-0.5" />
+                      ) : (
+                        <Download size={14} className="text-text-secondary group-hover:text-island-blue transition-colors shrink-0 mt-0.5" />
+                      )}
+                    </div>
+                  </button>
+                )
+              })}
             </div>
           </div>
         </div>

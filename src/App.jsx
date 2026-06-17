@@ -78,9 +78,7 @@ function LoadingScreen() {
     <div className="min-h-screen bg-gradient-ocean flex items-center justify-center">
       <div className="text-center">
         <div className="mb-8 animate-bounce-in flex flex-col items-center">
-          <div className="bg-white rounded-2xl px-8 py-5 shadow-premium mb-6">
-            <img src="/zanzibar.Camp_logo.png" alt="Zanzibar.Camp" className="h-20 w-auto object-contain" />
-          </div>
+          <img src="/zanzibar.Camp_logo.png" alt="Zanzibar.Camp" className="h-20 w-auto object-contain mb-6" />
           <p className="text-text-secondary text-lg">Loading Experience Hub...</p>
         </div>
         <div className="flex gap-2 justify-center">

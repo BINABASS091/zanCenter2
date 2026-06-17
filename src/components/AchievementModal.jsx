@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Share2 } from 'lucide-react'
 import { useUIStore } from '../store/gameStore'
+import { useGameStore } from '../store/gameStore'
 
 const RARITY_COLORS = {
   common: 'from-text-secondary/30 to-white/10',
@@ -10,12 +11,27 @@ const RARITY_COLORS = {
 }
 
 export default function AchievementModal() {
-  const { showAchievementModal, selectedAchievement, closeAchievementModal } = useUIStore()
+  const { showAchievementModal, selectedAchievement, closeAchievementModal, addNotification } = useUIStore()
+  const { userName } = useGameStore()
 
   if (!selectedAchievement) return null
 
   const rarity = selectedAchievement.rarity || 'rare'
   const gradient = RARITY_COLORS[rarity] || RARITY_COLORS.rare
+
+  const handleShare = async () => {
+    const text = `🏆 ${userName} just unlocked the "${selectedAchievement.title}" achievement on Zanzibar.Center!\n${selectedAchievement.description}\nzanzibar.center`
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Achievement Unlocked!', text, url: 'https://zanzibar.center' })
+      } catch {
+        // cancelled
+      }
+    } else if (navigator.clipboard) {
+      await navigator.clipboard.writeText(text)
+      addNotification({ type: 'success', title: 'Copied!', message: 'Achievement share text copied to clipboard.' })
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -68,7 +84,7 @@ export default function AchievementModal() {
                   <button onClick={closeAchievementModal} className="premium-button-primary px-6">
                     Awesome!
                   </button>
-                  <button className="premium-button-secondary px-4 flex items-center gap-2">
+                  <button onClick={handleShare} className="premium-button-secondary px-4 flex items-center gap-2">
                     <Share2 size={16} /> Share
                   </button>
                 </div>

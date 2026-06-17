@@ -105,6 +105,18 @@ export const MINI_GAMES = [
     players: '3.6K',
     color: 'from-tropical-green/20 to-island-blue/10',
   },
+  {
+    id: 'js-playground',
+    title: 'JS Playground',
+    description: 'Write your first JavaScript loop and plant farms on your island!',
+    emoji: '💻',
+    inspiration: 'CodeCombat',
+    minAgeMode: 'creator',
+    type: 'inline',
+    xp: 250,
+    players: '5.9K',
+    color: 'from-island-blue/20 to-tropical-green/10',
+  },
 ]
 
 export const ISLAND_ZONES = [
