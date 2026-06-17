@@ -53,7 +53,7 @@ export default function CampInfoPage() {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <img src="/zanzibar.Camp_logo-Photoroom.png" alt="Zanzibar.Camp School Camps" className="h-16 md:h-20 w-auto object-contain" />
+            <img src="/zanzibar.Camp_logo-Photoroom.png" alt="Zanzibar.Camp School Camps" className="h-32 md:h-40 w-auto object-contain" />
           </motion.div>
 
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-effect border border-golden-sun border-opacity-40 mb-4">

@@ -30,7 +30,7 @@ export default function TopNavigation() {
         className="hidden lg:flex items-center justify-between sticky top-0 z-40 glass-effect px-6 xl:px-8 py-3 backdrop-blur-xl"
       >
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <img src={LOGO_SRC} alt="Zanzibar.Camp" className="h-9 w-auto object-contain" />
+          <img src={LOGO_SRC} alt="Zanzibar.Camp" className="h-[72px] w-auto object-contain" />
         </Link>
 
         <div className="flex items-center gap-1 xl:gap-3">
@@ -83,7 +83,7 @@ export default function TopNavigation() {
 
       <motion.nav className="lg:hidden glass-effect px-4 py-2 flex items-center justify-between sticky top-0 z-40">
         <Link to="/" className="flex items-center gap-2">
-          <img src={LOGO_SRC} alt="Zanzibar.Camp" className="h-8 w-auto object-contain" />
+          <img src={LOGO_SRC} alt="Zanzibar.Camp" className="h-16 w-auto object-contain" />
         </Link>
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold">Lv.{level}</span>
@@ -100,7 +100,7 @@ export default function TopNavigation() {
           className="lg:hidden fixed left-0 top-14 h-[calc(100vh-3.5rem)] w-72 glass-effect z-30 p-4 overflow-y-auto border-r border-white/10"
         >
           <div className="px-3 mb-4">
-            <img src={LOGO_SRC} alt="Zanzibar.Camp" className="h-10 w-auto object-contain mb-2" />
+            <img src={LOGO_SRC} alt="Zanzibar.Camp" className="h-20 w-auto object-contain mb-2" />
             <p className="text-xs text-text-secondary">Hi, {userName}! 🌍</p>
           </div>
           {NAV_ITEMS.map((item) => (

@@ -149,7 +149,7 @@ function LandingNav({ scrolled }) {
             whileHover={{ scale: 1.04 }}
             transition={{ duration: 0.2 }}
           >
-            <img src="/zanzibar.Camp_logo-Photoroom.png" alt="Zanzibar.Camp" className="h-10 w-auto object-contain" />
+            <img src="/zanzibar.Camp_logo-Photoroom.png" alt="Zanzibar.Camp" className="h-20 w-auto object-contain" />
           </motion.div>
         </Link>
 
@@ -535,7 +535,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6 }}
               whileHover={{ scale: 1.03 }}
             >
-              <img src="/zanzibar.Camp_logo-Photoroom.png" alt="Zanzibar.Camp" className="h-16 md:h-20 w-auto object-contain" />
+              <img src="/zanzibar.Camp_logo-Photoroom.png" alt="Zanzibar.Camp" className="h-32 md:h-40 w-auto object-contain" />
             </motion.div>
 
             <motion.div
@@ -789,7 +789,7 @@ export default function LandingPage() {
               </div>
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <Link to="/" className="flex items-center">
-                  <img src="/zanzibar.Camp_logo-Photoroom.png" alt="Zanzibar.Camp" className="h-8 w-auto object-contain" />
+                  <img src="/zanzibar.Camp_logo-Photoroom.png" alt="Zanzibar.Camp" className="h-16 w-auto object-contain" />
                 </Link>
                 <p className="text-center">© {new Date().getFullYear()} Zanzibar.Center Experience Hub — play, build & learn React worldwide.</p>
               </div>
